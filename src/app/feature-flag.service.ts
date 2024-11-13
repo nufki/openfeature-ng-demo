@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FlagdProvider } from '@openfeature/flagd-provider';
-import { OpenFeature, Provider } from '@openfeature/web-sdk';
-import {EvaluationContext, Logger, ResolutionDetails} from "@openfeature/server-sdk";
+import { OpenFeature } from '@openfeature/server-sdk';
+
+// import {OpenFeature} from "@openfeature/web-sdk";
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,21 @@ export class FeatureFlagService {
   // private client: Client;
 
   constructor() {
-    this.initializeOpenFeature();
+    //this.initializeOpenFeature();
   }
 
-  private async initializeOpenFeature() {
+  public async initializeOpenFeature() {
+    const provider = new FlagdProvider({
+        host: 'localhost',
+        port: 8013,
+        tls: false,
+      });
 
-    OpenFeature.setProvider(new FlagdProvider())
-
+    if (provider) {
+      OpenFeature.setProvider(provider);
+    } else {
+      console.warn('No provider set, falling back to no-op');
+    }
 
     //resolveBooleanEvaluation(flagKey: string, defaultValue: boolean, transformedContext: EvaluationContext, logger: Logger): Promise<ResolutionDetails<boolean>>;
     //resolveBooleanEvaluation(flagKey: string, defaultValue: boolean, context: EvaluationContext, logger: Logger): ResolutionDetails<boolean>;
