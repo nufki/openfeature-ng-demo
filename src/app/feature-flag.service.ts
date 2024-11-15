@@ -1,48 +1,35 @@
-import { Injectable } from '@angular/core';
-import { FlagdProvider } from '@openfeature/flagd-provider';
-import { OpenFeature } from '@openfeature/server-sdk';
-
-// import {OpenFeature} from "@openfeature/web-sdk";
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeatureFlagService {
-  // private client: Client;
+  private apiUrl = 'http://localhost:8081/evaluate/v1/boolean'; // Flipt's evaluate endpoint
 
-  constructor() {
-    //this.initializeOpenFeature();
-  }
+  constructor(private http: HttpClient) {}
 
-  public async initializeOpenFeature() {
-    const provider = new FlagdProvider({
-        host: 'localhost',
-        port: 8013,
-        tls: false,
-      });
+  // Evaluate a feature flag with the targetingKey and flagKey
+  evaluateFeatureFlag(flagKey: string, targetingKey: string, namespaceKey: string): Observable<any> {
+    const url = `${this.apiUrl}`;
 
-    if (provider) {
-      OpenFeature.setProvider(provider);
-    } else {
-      console.warn('No provider set, falling back to no-op');
-    }
+    const body = {
+      flagKey: flagKey,
+      namespace: "default",
+      entityId: "contract",
+      context: {
+        targetingKey: targetingKey, // Use the provided targetingKey
+      },
+    };
 
-    //resolveBooleanEvaluation(flagKey: string, defaultValue: boolean, transformedContext: EvaluationContext, logger: Logger): Promise<ResolutionDetails<boolean>>;
-    //resolveBooleanEvaluation(flagKey: string, defaultValue: boolean, context: EvaluationContext, logger: Logger): ResolutionDetails<boolean>;
-    // const provider: Provider = new FlagdProvider({
-    //   host: 'localhost',
-    //   port: 8013,
-    //   tls: false,
-    // }) as unknown as Provider;
-    //
-    //
-    // await OpenFeature.setProvider(provider);
-    // await OpenFeature.setProviderAndWait(provider);
-    // this.client = OpenFeature.getClient();
-  }
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    });
 
-  async isFeatureEnabled(flagName: string): Promise<boolean> {
-    const client = OpenFeature.getClient();
-    return await client.getBooleanValue(flagName, false);
+    // Send the POST request
+    return this.http.post<any>(url, body, { headers });
   }
 }
+

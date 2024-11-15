@@ -17,7 +17,10 @@ export class AppComponent implements OnInit {
   constructor(private featureFlagService: FeatureFlagService) {}
 
   async ngOnInit() {
-    this.isFeatureEnabled = await this.featureFlagService.isFeatureEnabled('welcome-message');
-    console.log("isFeatureEnabled: " + this.isFeatureEnabled)
+    this.featureFlagService.evaluateFeatureFlag("special_feature", "contract", "59333-0006")
+      .subscribe(response => {
+        console.log('response: ', response);
+        this.isFeatureEnabled = response.enabled; // Assuming 'enabled' is the response property
+      });
   }
 }

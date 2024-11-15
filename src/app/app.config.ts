@@ -1,17 +1,8 @@
-import {APP_INITIALIZER, ApplicationConfig, importProvidersFrom} from '@angular/core';
-import {FeatureFlagService} from "./feature-flag.service";
-
-export function initializeApp(featureFlagService: FeatureFlagService) {
-  return () => featureFlagService.initializeOpenFeature();
-}
+import {ApplicationConfig} from '@angular/core';
+import {provideHttpClient} from "@angular/common/http";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    FeatureFlagService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp,
-      deps: [FeatureFlagService],
-      multi: true
-    }]
+    provideHttpClient(),
+  ]
 };
