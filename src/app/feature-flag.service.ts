@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FlagdProvider } from '@openfeature/flagd-provider';
-import { OpenFeature } from '@openfeature/server-sdk';
-
-// import {OpenFeature} from "@openfeature/web-sdk";
+import {OpenFeature} from "@openfeature/web-sdk";
+import { FliptProvider } from '@openfeature/flipt-provider';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +13,8 @@ export class FeatureFlagService {
   }
 
   public async initializeOpenFeature() {
-    const provider = new FlagdProvider({
-        host: 'localhost',
-        port: 8013,
-        tls: false,
+    const provider = new FliptProvider({
+        url: 'http://localhost:8081',
       });
 
     if (provider) {
